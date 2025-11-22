@@ -1,6 +1,6 @@
 # 📄 Albayan Reports
 
-[!Albayan Reports Logo](docs/images/AlbayanReportsLogo.png)
+![Albayan Reports Logo](docs/images/AlbayanReportsLogo.png)
 
 Albayan Reports is an open-source reporting engine designed for seamless integration into new or existing enterprise application stacks.
 
