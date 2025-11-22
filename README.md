@@ -1,5 +1,7 @@
 # 📄 Albayan Reports
 
+[!Albayan Reports Logo](docs/images/AlbayanReportsLogo.png)
+
 Albayan Reports is an open-source reporting engine designed for seamless integration into new or existing enterprise application stacks.
 
 It enables organizations to generate static reports from custom OpenOffice/LibreOffice templates. Reports can be delivered in native OpenOffice/LibreOffice formats or print-ready PDFs, with full support for embedding text, dynamic tables, and images. Albayan standardizes reporting across teams while offering complete flexibility in template design.
