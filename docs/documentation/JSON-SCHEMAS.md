@@ -10,7 +10,10 @@
     "report_template_id",
     "report_template_version",
     "report_output_format",
-    "report_data"
+    "report_data",
+    "request_date",
+    "update_date",
+    "processing_status"
   ],
   "properties": {
     "report_request_id": {
@@ -41,6 +44,25 @@
       "type": "object",
       "description": "A dictionary/object containing the actual data for the report.",
       "additionalProperties": true
+    },
+    "request_date":{
+      "type": "string",
+      "format":"date-time",
+      "description":"Time stamp is in ISO 8601 format. e.g., 2025-12-20T13:33:25Z"
+    },
+    "update_date":{
+      "type": "string",
+      "format":"date-time",
+      "description":"Time stamp is in ISO 8601 format. e.g., 2025-12-20T13:33:25Z"
+    },
+     "processing_status": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "SUCESSFUL",
+        "FAILED"
+      ],
+      "description": "The status of report creation."
     }
   }
 }
@@ -58,7 +80,8 @@
     "report_template_version",
     "template_file",
     "template_file_type",
-    "template_data_definition"
+    "template_data_definition",
+    "creation_date"
   ],
   "properties": {
     "report_template_id": {
@@ -83,6 +106,11 @@
       "type": "object",
       "description": "A schema or dictionary defining the structure of the data this template expects.",
       "additionalProperties": true
+    },
+    "creation_date":{
+      "type": "string",
+      "format":"date-time",
+      "description":"Time stamp is in ISO 8601 format. e.g., 2025-12-20T13:33:25Z"
     }
   }
 }
