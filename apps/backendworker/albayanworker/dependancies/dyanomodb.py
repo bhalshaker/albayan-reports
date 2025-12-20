@@ -34,5 +34,4 @@ async def get_dynamodb_table(table_name: str):
     # The 'async with' handles the lifecycle of the resource
     async with session.resource(**dynamo_config) as dynamo_resource:
         table = dynamo_resource.Table(table_name)
-        # Yield the table object to the route handler
-        yield table
+        return table
