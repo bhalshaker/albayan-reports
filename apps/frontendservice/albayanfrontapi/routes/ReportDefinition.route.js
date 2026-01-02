@@ -12,30 +12,39 @@ import {
   uuidSchema,
   reportDefinitionSchema,
 } from "../schemas/reports.schema.js";
-const ReportsDefinitionRouter = express.Router();
 
+// Define the router
+const ReportsDefinitionRouter = express.Router();
+// Define create report definition route
 ReportsDefinitionRouter.post(
-  "/reports",
-  upload.single("file"),
-  validateSchemas(reportDefinitionSchema, "body"),
-  createReportDefinition
+  "/reports", // Route path
+  upload.single("file"), // Middleware to handle file upload
+  validateSchemas(reportDefinitionSchema, "body"), // Validate request body
+  createReportDefinition // Controller to handle creation
 );
-ReportsDefinitionRouter.get("/reports", getAllReportDefinitions);
+// Define get all report definitions route
 ReportsDefinitionRouter.get(
-  "/reports/:reportDefinitionId",
-  validateSchemas(uuidSchema, "params"),
-  getReportDefinitionById
+  "/reports", //Route Path
+  getAllReportDefinitions //Controller to get all report definitions
 );
+// Define get report definition by ID route
+ReportsDefinitionRouter.get(
+  "/reports/:reportDefinitionId", // Route Path
+  validateSchemas(uuidSchema, "params"), // Validate request params
+  getReportDefinitionById // Controller to get report definition by ID
+);
+// Define delete report definition route
 ReportsDefinitionRouter.delete(
-  "/reports/:reportDefinitionId",
-  validateSchemas(uuidSchema, "params"),
-  deleteReportDefinition
+  "/reports/:reportDefinitionId", // Route Path
+  validateSchemas(uuidSchema, "params"), // Validate request params
+  deleteReportDefinition /// Controller to delete report definition
 );
+// Define update report definition route
 ReportsDefinitionRouter.patch(
-  "/reports/:reportDefinitionId",
-  upload.single("file"),
-  validateSchemas(uuidSchema, "params"),
-  validateSchemas(reportDefinitionSchema, "body"),
-  updateReportDefinitionById
+  "/reports/:reportDefinitionId", // Route Path
+  upload.single("file"), // Middleware to handle file upload
+  validateSchemas(uuidSchema, "params"), // Validate request params
+  validateSchemas(reportDefinitionSchema, "body"), // Validate request body
+  updateReportDefinitionById // Controller to update report definition
 );
 export { ReportsDefinitionRouter };

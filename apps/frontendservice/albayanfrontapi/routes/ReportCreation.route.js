@@ -21,18 +21,18 @@ ReportCreationRoute.post(
 
 ReportCreationRoute.get(
   "/reports/:reportDefinitionId/issue",
-  validateSchemas(uuidSchema, "param"),
+  validateSchemas(uuidSchema, "params"),
   getAllReportCreationRequests
 );
 
 ReportCreationRoute.get(
   "/reports/:reportDefinitionId/issue/:report_request_id",
-  validateSchemas(uuidSchema, "param"),
+  validateSchemas(uuidSchema, "params"),
   getReportByRequestById
 );
 ReportCreationRoute.delete(
   "/reports/:reportDefinitionId/issue/:report_request_id",
-  validateSchemas(uuidSchema, "param"),
+  validateSchemas(uuidSchema, "params"),
   deleteReportRequest
 );
 export { ReportCreationRoute };
