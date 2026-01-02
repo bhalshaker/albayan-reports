@@ -14,19 +14,19 @@ Future development will focus on evolving Albayan into a vendor-neutral, extensi
 
 ## 📊 Features at a Glance
 
-| Category              | Highlights                                                                                                                                              |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Report Generation** | Static reports from custom OpenOffice/LibreOffice templates, exported as native formats or PDFs.                                                        |
-| **Content Support**   | Text, tables, and dynamic images                                                                                                                        |
-| **APIs**              | REST endpoints for report definitions, issuance, retrieval, and deletion                                                                                |
-| **Architecture**      | Express + FastAPI + DynamoDB for definitions & metadata; S3 for templates and generated reports; Kafka MQ for communication between Express and FastAPI |
-| **Scalability**       | Multi-user support, issuance tracking, MQ integration planned                                                                                           |
-| **Security**          | API key authentication for controlled enterprise access                                                                                                 |
-| **Deployment**        | Containerized (Podman/Kubernetes), AWS DynamoDB required, cloud-agnostic                                                                                |
-| **Automation**        | CI/CD pipelines with Jenkins & GitHub Actions; Terraform & Ansible scripts                                                                              |
-| **Testing**           | Automated testing with Jest, SuperTest, and Pytest                                                                                                      |
-| **Open Source**       | Documentation, examples, and sample templates included in the GitHub repository                                                                         |
-| **Future Vision**     | Vendor-neutral, extensible reporting system for diverse environments                                                                                    |
+| Category              | Highlights                                                                                       |
+| --------------------- | ------------------------------------------------------------------------------------------------ |
+| **Report Generation** | Static reports from custom OpenOffice/LibreOffice templates, exported as native formats or PDFs. |
+| **Content Support**   | Text, tables, and dynamic images                                                                 |
+| **APIs**              | REST endpoints for report definitions, issuance, retrieval, and deletion                         |
+| **Architecture**      | Express + FastAPI + DynamoDB for definitions & metadata                                          |
+| **Scalability**       | Multi-user support and issuance tracking planned                                                 |
+| **Security**          | API key authentication for controlled enterprise access                                          |
+| **Deployment**        | Containerized (Podman/Kubernetes), AWS DynamoDB required, cloud-agnostic                         |
+| **Automation**        | CI/CD pipelines with Jenkins & GitHub Actions; Terraform & Ansible scripts                       |
+| **Testing**           | Automated testing with Jest, SuperTest, and Pytest                                               |
+| **Open Source**       | Documentation, examples, and sample templates included in the GitHub repository                  |
+| **Future Vision**     | Vendor-neutral, extensible reporting system for diverse environments                             |
 
 ---
 
@@ -74,23 +74,22 @@ Future development will focus on evolving Albayan into a vendor-neutral, extensi
 
 ### 🛣️ Express Endpoints
 
-| HTTP Method | Endpoint                            | Description                           | Access           |
-| ----------- | ----------------------------------- | ------------------------------------- | ---------------- |
-| GET         | `/reports`                          | List all report definitions           | API Key required |
-| POST        | `/reports`                          | Define a new report                   | API Key required |
-| GET         | `/reports/:reportId`                | Retrieve a specific report definition | API Key required |
-| PUT         | `/reports/:reportId`                | Update a specific report definition   | API Key required |
-| DELETE      | `/reports/:reportId`                | Delete a specific report definition   | API Key required |
-| POST        | `/reports/:reportId/issue`          | Issue a new report                    | API Key required |
-| GET         | `/reports/:reportId/issue`          | List all issued reports               | API Key required |
-| GET         | `/reports/:reportId/issue/:issueId` | Retrieve an issued report             | API Key required |
-| DELETE      | `/reports/:reportId/issue/:issueId` | Delete an issued report               | API Key required |
+| HTTP Method | Endpoint                            | Description                           |
+| ----------- | ----------------------------------- | ------------------------------------- |
+| GET         | `/reports`                          | List all report definitions           |
+| POST        | `/reports`                          | Define a new report                   |
+| GET         | `/reports/:reportId`                | Retrieve a specific report definition |
+| PUT         | `/reports/:reportId`                | Update a specific report definition   |
+| DELETE      | `/reports/:reportId`                | Delete a specific report definition   |
+| POST        | `/reports/:reportId/issue`          | Issue a new report                    |
+| GET         | `/reports/:reportId/issue`          | List all issued reports               |
+| GET         | `/reports/:reportId/issue/:issueId` | Retrieve an issued report             |
+| DELETE      | `/reports/:reportId/issue/:issueId` | Delete an issued report               |
 
 ### 🛤️ FastAPI Endpoints
 
 | HTTP Method | Endpoint                  | Description               | Access |
 | ----------- | ------------------------- | ------------------------- | ------ |
-| POST        | `/reports/issue`          | Request report generation | Public |
 | GET         | `/reports/issue/:issueId` | Retrieve generated report | Public |
 
 ---
@@ -106,29 +105,24 @@ Future development will focus on evolving Albayan into a vendor-neutral, extensi
 | **dotenv**                   | Loads environment variables from `.env` into `process.env`   |
 | **@aws-sdk/client-dynamodb** | AWS SDK for DynamoDB integration                             |
 | **@aws-sdk/lib-dynamodb**    | DynamoDB helper utilities                                    |
-| **kafkajs**                  | Kafka client for Node.js                                     |
 | **cors**                     | Middleware for enabling CORS                                 |
-| **jest**                     | JavaScript testing framework                                 |
-| **supertest**                | HTTP assertions for testing APIs                             |
 | **nodemon**                  | Development utility for auto-restarting Node.js applications |
 
 ### 🐍 albayanworker (FastAPI)
 
-| Tool/Library | Purpose                                                   |
-| ------------ | --------------------------------------------------------- |
-| **fastapi**  | Web framework for building server-side applications       |
-| **uvicorn**  | ASGI server for running FastAPI apps                      |
-| **pyuno**    | LibreOffice/OpenOffice integration for template rendering |
-| **aiokafka** | Kafka client for Python                                   |
-| **aioboto3** | AWS SDK for Python                                        |
-| **pytest**   | Python testing framework                                  |
+| Tool/Library   | Purpose                                                         |
+| -------------- | --------------------------------------------------------------- |
+| **fastapi**    | Web framework for building server-side applications             |
+| **uvicorn**    | ASGI server for running FastAPI apps                            |
+| **pyuno**      | LibreOffice/OpenOffice integration for template rendering       |
+| **jsonschema** | Validation library of objects based on json-schema.org standard |
+| **aioboto3**   | AWS SDK for Python                                              |
 
 ### 🦭 Container Images
 
 | Image                     | Purpose                  |
 | ------------------------- | ------------------------ |
 | **amazon/dynamodb-local** | Local DynamoDB emulation |
-| **apache/kafka**          | Message queue service    |
 
 ---
 

@@ -1,4 +1,4 @@
-fastapi=>0.124.2
-uvicorn==0.38.0
-aiokafka==0.12.0
-aioboto3==15.5.0
+fastapi>=0.127.0
+uvicorn>=0.40.0
+aioboto3>=15.5.0
+jsonschema>=4.25.1

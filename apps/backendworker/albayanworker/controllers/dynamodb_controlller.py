@@ -28,13 +28,9 @@ class DynamodbController:
 
     async def get_template_info(
         report_template_id: uuid,
-        report_template_version: int,
         report_template_table: any,
     ):
         response = await report_template_table.get_item(
-            Key={
-                "report_template_id": str(report_template_id),
-                "report_template_version": report_template_version,
-            }
+            Key={"report_template_id": str(report_template_id)}
         )
         return (response or {}).get("Item")

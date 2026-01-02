@@ -14,15 +14,18 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    """Initilizes connection with libreoffice."""
+    """Initilizes connection with libreoffice and check if dynamodb tables exists and folders exits."""
     # Connect to required databases/services
     try:
         await get_libreoffice()
+        await get_dynamodb_table(config.definition_table)
+        await get_dynamodb_table(config.processing_table)
+        config.create_directories_if_not_exists()
         logger.info("Albayan Reports Worker successfully started.")
         yield
     except Exception as e:
         logger.error(f"Failed to connect to one or service or more {e}")
-        raise  # Re-raise the exception to stop the app from starting
+        raise
 
 
 app = FastAPI(
