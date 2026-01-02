@@ -4,6 +4,7 @@ from typing import AsyncGenerator
 import logging
 from albayanworker.dependancies.libreoffice import get_libreoffice
 from albayanworker.dependancies.dyanomodb import get_dynamodb_table
+from albayanworker.dependancies.dyanomodb import close_dynamodb_resource
 from albayanworker.configs.config import config
 
 logging.basicConfig(
@@ -26,6 +27,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as e:
         logger.error(f"Failed to connect to one or service or more {e}")
         raise
+    finally:
+        # Clean up aioboto3 resources opened during startup
+        await close_dynamodb_resource()
 
 
 app = FastAPI(

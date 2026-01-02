@@ -4,27 +4,44 @@ from albayanworker.configs.config import config
 
 # Set up logging
 logger = logging.getLogger(__name__)
-# Global variable to hold the LibreOffice co
+
+# Single session and persistent resource for the application lifetime
+session = aioboto3.Session()
+_dynamo_resource = None
+_tables_cache = {}
+
+
+async def get_dynamodb_resource():
+    """Initialize and return the persistent aioboto3 DynamoDB resource."""
+    global _dynamo_resource
+    if _dynamo_resource is None:
+        # Enter the async context and keep the resource alive for the app lifetime
+        _dynamo_resource = await session.resource(
+            "dynamodb",
+            region_name=config.aws_region,
+            endpoint_url=config.dynamodb_endpoint,
+            aws_access_key_id=config.aws_access_key_id,
+            aws_secret_access_key=config.aws_secret_access_key,
+        ).__aenter__()
+    return _dynamo_resource
+
+
+async def close_dynamodb_resource():
+    """Close the persistent aioboto3 resource and clear cached tables."""
+    global _dynamo_resource, _tables_cache
+    if _dynamo_resource is not None:
+        await _dynamo_resource.__aexit__(None, None, None)
+        _dynamo_resource = None
+        _tables_cache.clear()
 
 
 async def get_dynamodb_table(table_name: str):
     """
-    Dependency function that initializes and yields the aioboto3 DynamoDB Table resource.
+    Returns a boto3 DynamoDB Table resource, initializing the aioboto3 resource
+    and caching table objects for reuse across the application lifetime.
     """
-
-    # Configuration for Connection
-    dynamo_config = {
-        "service_name": "dynamodb",
-        "region_name": config.aws_region,
-        "endpoint_url": config.dynamodb_endpoint,
-        "aws_access_key_id": config.aws_access_key_id,
-        "aws_secret_access_key": config.aws_secret_access_key,
-    }
-
-    # Create Session and Resource
-    session = aioboto3.Session()
-
-    # The 'async with' handles the lifecycle of the resource
-    async with session.resource(**dynamo_config) as dynamo_resource:
-        table = dynamo_resource.Table(table_name)
-        return table
+    resource = await get_dynamodb_resource()
+    if table_name not in _tables_cache:
+        # Table() is an awaitable and must be awaited
+        _tables_cache[table_name] = await resource.Table(table_name)
+    return _tables_cache[table_name]
