@@ -254,3 +254,7 @@ crash.log
 
 # Local .terraform-version file
 .terraform-version
+infra/terraform/local/terraform.tfstate
+infra/terraform/local/terraform.tfstate.backup
+infra/terraform/local/.terraform.lock.hcl
+infra/terraform/local/.terraform/*
