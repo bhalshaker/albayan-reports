@@ -26,9 +26,9 @@ async def get_libreoffice():
         try:
             # Initialize the LibreOffice connection in a separate thread to avoid blocking
             libreoffice = await asyncio.to_thread(
-                initilize_libreoffice_sync(
-                    config.libreoffice_host, config.libreoffice_port
-                )
+                initilize_libreoffice_sync,
+                config.libreoffice_host,
+                config.libreoffice_port,
             )
             logger.info("✅ Successfully connected to LibreOffice.")
             return libreoffice
