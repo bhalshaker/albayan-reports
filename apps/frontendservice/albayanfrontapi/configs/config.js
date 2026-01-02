@@ -6,12 +6,14 @@ dotenv.config();
 const config = {
   PORT: parseInt(process.env.PORT, 10) || 3000,
   NODE_ENV: process.env.NODE_ENV || "development",
-  AWS_REGION: process.env.AWS_REGION,
-  DYNAMODB_ENDPOINT: process.env.DYNAMODB_ENDPOINT,
+  AWS_REGION: process.env.AWS_REGION || "us-east-1",
+  AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID || "dummy",
+  AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY || "dummy",
+  DYNAMODB_ENDPOINT: process.env.DYNAMODB_ENDPOINT || "http://localhost:8000 ",
   DEFINITION_TABLE: process.env.DEFINITION_TABLE || "reports_definition",
   PROCESSING_TABLE: process.env.PROCESSING_TABLE || "reports_processing",
-  WORKER_URL: process.env.WORKER_URL || "http://localhost:8000",
-  UPLOAD_FOLDER: process.env.UPLOAD_FOLDER,
+  WORKER_URL: process.env.WORKER_URL || "http://localhost:8080",
+  UPLOAD_FOLDER: process.env.UPLOAD_FOLDER || "/tmp/input",
   REPORT_OUTPUT_FOLDER: process.env.REPORT_OUTPUT_FOLDER || "/tmp/output",
 };
 

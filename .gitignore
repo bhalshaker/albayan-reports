@@ -234,3 +234,23 @@ db.sqlite3-journal
 
 # Sass
 .sass-cache/
+
+# Terraform generated files
+.terraform/          # Local state and plugin directory
+*.tfstate            # Terraform state files (local environment)
+*.tfstate.*.backup   # Terraform state backup files
+*.tfvars             # Variable definition files that might contain sensitive data
+# Override the above to include a specific tfvars file if needed, e.g. production.tfvars
+# !production.tfvars
+
+# Crash log files
+crash.log
+
+# secrets
+*.enc                # Encrypted files
+
+# Modules
+.terraform.lock.hcl  # Lock file, generally should be committed to ensure consistent dependency versions across environments, but sometimes ignored in specific workflows
+
+# Local .terraform-version file
+.terraform-version
