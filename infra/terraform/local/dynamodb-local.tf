@@ -17,7 +17,7 @@ provider "aws" {
 
     # This is the correct way to define service endpoints in AWS Provider v5
     endpoints {
-      dynamodb = "http://localhost:8090"
+      dynamodb = "http://localhost:8000"
     }
 }
 
