@@ -8,16 +8,17 @@ terraform{
 }
 
 provider "aws" {
-    region = "us-west-2"
-    access_key = "dummy"
-    secret_key = "dummy"
+    region                      = "us-east-1"
+    access_key                  = "dummy"
+    secret_key                  = "dummy"
     skip_credentials_validation = true
-    skip_requesting_account_id = true
+    skip_metadata_api_check     = true
+    skip_requesting_account_id  = true
 
+    # This is the correct way to define service endpoints in AWS Provider v5
     endpoints {
       dynamodb = "http://localhost:8090"
     }
-  
 }
 
 resource "aws_dynamodb_table" "reports_definition" {
@@ -30,24 +31,6 @@ resource "aws_dynamodb_table" "reports_definition" {
       name="report_template_id"
       type = "S"
     }
-
-    # Other attributes
-    # attribute {
-    #   name="template_file"
-    #   type = "S"
-    # }
-    # attribute {
-    #   name="template_file_type"
-    #   type = "S"
-    # }
-    # attribute {
-    #   name="creation_date"
-    #   type = "S"
-    # }
-    # attribute {
-    #   name="updated_date"
-    #   type = "S"
-    # }
   
 }
 
@@ -61,30 +44,4 @@ resource "aws_dynamodb_table" "reports_processing" {
       name="report_request_id"
       type = "S"
     }
-    # Other attributes
-    # attribute {
-    #   name="report_template_id"
-    #   type = "S"
-    # }
-    # attribute {
-    #   name="report_output_format"
-    #   type = "S"
-    # }
-    # attribute {
-    #   name="template_file_type"
-    #   type = "S"
-    # }
-    # attribute {
-    #   name="request_date"
-    #   type = "S"
-    # }
-    # attribute {
-    #   name="update_date"
-    #   type = "S"
-    # }
-    # attribute {
-    #   name="processing_status"
-    #   type = "S"
-    # }
-  
 }
