@@ -4,16 +4,15 @@ import { config } from "./config.js";
 
 // Initialize DynamoDB client
 let dynamodbClient;
-
-// Create DynamoDB client instance based on config.DYNAMODB_ENDPOINT value
-if (config.DYNAMODB_ENDPOINT && config.DYNAMODB_ENDPOINT !== "") {
-  dynamodbClient = new DynamoDBClient({
-    region: config.AWS_REGION,
-    endpoint: config.DYNAMODB_ENDPOINT,
-  });
-} else {
-  dynamodbClient = new DynamoDBClient({ region: config.AWS_REGION });
-}
+// Create DynamoDB client instance
+dynamodbClient = new DynamoDBClient({
+  region: config.AWS_REGION,
+  endpoint: config.DYNAMODB_ENDPOINT,
+  credentials: {
+    accessKeyId: config.AWS_ACCESS_KEY_ID,
+    secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
+  },
+});
 // Create a DocumentClient
 const documentClient = DynamoDBDocumentClient.from(dynamodbClient, {
   marshallOptions: { removeUndefinedValues: true },
