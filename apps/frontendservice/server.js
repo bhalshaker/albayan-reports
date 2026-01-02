@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import morgan from "morgan";
 import { config } from "./albayanfrontapi/configs/config.js";
 import { ReportCreationRoute } from "./albayanfrontapi/routes/ReportCreation.route.js";
@@ -8,7 +9,8 @@ import { ReportsDefinitionRouter } from "./albayanfrontapi/routes/ReportDefiniti
 const app = express();
 // Enable JSON parsing for incoming requests
 app.use(express.json());
-
+// Serve files from that folder
+app.use(express.static(path.resolve(config.REPORT_OUTPUT_FOLDER)));
 // Morgan logging middleware
 app.use(morgan("combined"));
 // Application Routes

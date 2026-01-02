@@ -12,6 +12,7 @@ const config = {
   PROCESSING_TABLE: process.env.PROCESSING_TABLE || "reports_processing",
   WORKER_URL: process.env.WORKER_URL || "http://localhost:8000",
   UPLOAD_FOLDER: process.env.UPLOAD_FOLDER,
+  REPORT_OUTPUT_FOLDER: process.env.REPORT_OUTPUT_FOLDER || "/tmp/output",
 };
 
 // Export config dictionary
