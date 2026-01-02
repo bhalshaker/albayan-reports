@@ -4,9 +4,9 @@
 
 Albayan Reports is an open-source reporting engine designed for seamless integration into new or existing enterprise application stacks.
 
-It enables organizations to generate static reports from custom OpenOffice/LibreOffice templates. Reports can be delivered in native OpenOffice/LibreOffice formats or print-ready PDFs, with full support for embedding text, dynamic tables, and images. Albayan standardizes reporting across teams while offering complete flexibility in template design.
+It enables organizations to generate static reports from custom Writer OpenOffice/LibreOffice templates. Reports can be delivered in native OpenOffice/LibreOffice formats or print-ready PDFs, with full support for embedding text, dynamic tables, and images. Albayan standardizes reporting across teams while offering complete flexibility in template design.
 
-Built on a scalable, multi-service architecture utilizing **Express**, **FastAPI**, **S3**, **Kafka MQ**, and **DynamoDB**, the system is engineered to support multi-user environments, automated CI/CD pipelines, and containerized deployments.
+Built on a scalable, multi-service architecture utilizing **Express**, **FastAPI**, and **DynamoDB**, the system is engineered to support multi-user environments, automated CI/CD pipelines, and containerized deployments.
 
 Future development will focus on evolving Albayan into a vendor-neutral, extensible reporting solution that enterprises can confidently adopt across diverse cloud environments.
 
@@ -35,13 +35,13 @@ Future development will focus on evolving Albayan into a vendor-neutral, extensi
 ```
 /albayan-reports/
 ├── apps/ # Deployable services
-│   ├── api-fastapi/ # Python/FastAPI service (handles report generation)
-│   │   ├── src/
+│   ├── backendworker/ # Python/FastAPI service (handles report generation)
+│   │   ├── albayanworker/
 │   │   ├── Dockerfile
 │   │   └── requirements.txt
 │   │
-│   └── service-express/ # Node/Express service (handles report creation & management)
-│       ├── src/
+│   └── frontendservice/ # Node/Express service (handles report creation & management)
+│       ├── albayanfrontapi/
 │       ├── Dockerfile
 │       ├── package.json
 │       └── server.js
@@ -97,14 +97,13 @@ Future development will focus on evolving Albayan into a vendor-neutral, extensi
 
 ## 🛠️ Technologies Used
 
-### ☕️ ExpressJS
+### ☕️ albayanfrontapi (ExpressJS)
 
 | Tool/Library                 | Purpose                                                      |
 | ---------------------------- | ------------------------------------------------------------ |
 | **express**                  | Web framework for building server-side applications          |
 | **ajv**                      | Schema-based validator for request payloads                  |
 | **dotenv**                   | Loads environment variables from `.env` into `process.env`   |
-| **@aws-sdk/client-s3**       | AWS SDK for S3 integration                                   |
 | **@aws-sdk/client-dynamodb** | AWS SDK for DynamoDB integration                             |
 | **@aws-sdk/lib-dynamodb**    | DynamoDB helper utilities                                    |
 | **kafkajs**                  | Kafka client for Node.js                                     |
@@ -113,25 +112,23 @@ Future development will focus on evolving Albayan into a vendor-neutral, extensi
 | **supertest**                | HTTP assertions for testing APIs                             |
 | **nodemon**                  | Development utility for auto-restarting Node.js applications |
 
-### 🐍 FastAPI
+### 🐍 albayanworker (FastAPI)
 
-| Tool/Library  | Purpose                                                   |
-| ------------- | --------------------------------------------------------- |
-| **fastapi**   | Web framework for building server-side applications       |
-| **uvicorn**   | ASGI server for running FastAPI apps                      |
-| **websocket** | Real-time communication support                           |
-| **pyuno**     | LibreOffice/OpenOffice integration for template rendering |
-| **aiokafka**  | Kafka client for Python                                   |
-| **boto3**     | AWS SDK for Python                                        |
-| **pytest**    | Python testing framework                                  |
+| Tool/Library | Purpose                                                   |
+| ------------ | --------------------------------------------------------- |
+| **fastapi**  | Web framework for building server-side applications       |
+| **uvicorn**  | ASGI server for running FastAPI apps                      |
+| **pyuno**    | LibreOffice/OpenOffice integration for template rendering |
+| **aiokafka** | Kafka client for Python                                   |
+| **aioboto3** | AWS SDK for Python                                        |
+| **pytest**   | Python testing framework                                  |
 
 ### 🦭 Container Images
 
-| Image                     | Purpose                          |
-| ------------------------- | -------------------------------- |
-| **amazon/dynamodb-local** | Local DynamoDB emulation         |
-| **apache/kafka**          | Message queue service            |
-| **minio/minio**           | Local S3-compatible object store |
+| Image                     | Purpose                  |
+| ------------------------- | ------------------------ |
+| **amazon/dynamodb-local** | Local DynamoDB emulation |
+| **apache/kafka**          | Message queue service    |
 
 ---
 
