@@ -12,23 +12,16 @@ async def get_dynamodb_table(table_name: str):
     Dependency function that initializes and yields the aioboto3 DynamoDB Table resource.
     """
 
-    # 1. Configuration for Connection
-    # By default, use the AWS cloud settings
+    # Configuration for Connection
     dynamo_config = {
         "service_name": "dynamodb",
-        "region_name": config.aws_regsion,
+        "region_name": config.aws_region,
+        "endpoint_url": config.dynamodb_endpoint,
+        "aws_access_key_id": config.aws_access_key_id,
+        "aws_secret_access_key": config.aws_secret_access_key,
     }
 
-    # 2. Local Mode Overrides
-    if config.environment in ["TEST", "DEVELOPMENT"]:
-        logger.info("❗️ Connecting to DynamoDB LOCAL")
-        # Override the settings for DynamoDB Local
-        dynamo_config["endpoint_url"] = "http://localhost:8000"
-        # Dummy credentials are required for Boto3/aioboto3 to connect locally
-        dynamo_config["aws_access_key_id"] = "DUMMYID"
-        dynamo_config["aws_secret_access_key"] = "DUMMYSECRET"
-
-    # 3. Create Session and Resource
+    # Create Session and Resource
     session = aioboto3.Session()
 
     # The 'async with' handles the lifecycle of the resource
