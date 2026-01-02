@@ -1,11 +1,11 @@
+// Schema definition for uuid validation
 const uuidSchema = {
   type: "string",
   format: "uuid",
 };
 
+// Schema definition for report definition creation
 const reportDefinitionSchema = {
-  $schema: "https://json-schema.org/draft/2020-12/schema",
-  title: "Report Template Schema",
   type: "object",
   required: ["template_file_type"],
   properties: {
@@ -18,17 +18,10 @@ const reportDefinitionSchema = {
   },
 };
 
+// Schema definition for report data submission
 const reportDataSchema = {
-  $schema: "https://json-schema.org/draft/2020-12/schema",
-  title: "Report Request Schema",
   type: "object",
-  required: [
-    "report_output_format",
-    "report_data",
-    "request_date",
-    "update_date",
-    "processing_status",
-  ],
+  required: ["report_output_format", "report_data"],
   properties: {
     report_output_format: {
       type: "string",
@@ -44,9 +37,8 @@ const reportDataSchema = {
   },
 };
 
+// Schema definition for writer data used in report generation
 const writerDataSchema = {
-  $schema: "https://json-schema.org/draft/2020-12/schema",
-  title: "Writer Data Schema",
   type: "object",
   required: [
     "writer_placeholders",
