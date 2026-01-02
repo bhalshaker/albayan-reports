@@ -11,6 +11,7 @@ class Config:
     aws_region: str
     aws_access_key_id: str
     aws_secret_access_key: str
+    dynamodb_endpoint: str
     definition_table: str
     processing_table: str
     # LibreOffice Configurations
@@ -37,6 +38,7 @@ class Config:
             aws_region=os.getenv("AWS_REGION", "us-east-1"),
             aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID", "dummy"),
             aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY", "dummy"),
+            dynamodb_endpoint=os.getenv("DYNAMODB_ENDPOINT", "http://localhost:8000"),
             definition_table=os.getenv("DEFINITION_TABLE_NAME", "reports_definition"),
             processing_table=os.getenv("PROCESSING_TABLE_NAME", "reports_processing"),
             libreoffice_host=os.getenv("LIBREOFFICE_HOST", "localhost").lower(),
