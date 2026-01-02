@@ -128,7 +128,7 @@ Future development will focus on evolving Albayan into a vendor-neutral, extensi
 
 ## 📘 Application Guides
 
-- [System Architecture](docs/architecture.md)
-- [Template Creation Guide](docs/templates.md)
-- [Project Setup & Deployment Guide](docs/project_setup_and_deployment.md)
-- [Application Usage Examples](docs/application_usage_example.md)
+- [System Architecture](docs/documentation/architecture.md)
+- [Template Creation Guide](docs/documentation/templates.md)
+- [Project Setup & Deployment Guide](docs/documentation/project_setup_and_deployment.md)
+- [Application Usage Examples](docs/documentation/application_usage_example.md)
