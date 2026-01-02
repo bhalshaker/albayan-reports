@@ -5,12 +5,13 @@ const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
 
 const validateSchemas = (schema, source) => (request, reponse, next) => {
-  // Allow shorthand "param" -> "params"
-  if (source === "param") source = "params";
-
-  // Validate the specified part of the request (body, params, query)
-  let dataToValidate = request[source];
-
+  // Validate the specified part of the request (body, params, report_data)
+  let dataToValidate;
+  if (["params", "body"].includes(source)) {
+    dataToValidate = request[source];
+  } else if (source === "report_data") {
+    dataToValidate = request.body.report_data;
+  }
   // only process if source is body and body is a string (from form-data)
   if (
     source === "body" &&
