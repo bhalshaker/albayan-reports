@@ -7,17 +7,25 @@ terraform{
     }
 }
 
+variable "is_local" {
+  type=bool
+  default=true
+}
+variable "aws_region" {}
+variable "access_key" {}
+variable "secret_key" {}
+variable "dynamodb" {}
+
 provider "aws" {
-    region                      = "us-east-1"
-    access_key                  = "dummy"
-    secret_key                  = "dummy"
-    skip_credentials_validation = true
-    skip_metadata_api_check     = true
-    skip_requesting_account_id  = true
+    region                      = var.aws_region
+    access_key                  = var.access_key
+    secret_key                  = var.secret_key
+    skip_credentials_validation = var.is_local
+    skip_requesting_account_id  = var.is_local
 
     # This is the correct way to define service endpoints in AWS Provider v5
     endpoints {
-      dynamodb = "http://localhost:8000"
+      dynamodb = var.dynamodb
     }
 }
 
