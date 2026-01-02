@@ -53,7 +53,7 @@ def save_document(document, output_folder: str, report_id: str, filter_name: str
     file_name = report_id + file_extension
     try:
         # Create the full file path and URL
-        full_path = pathlib.Path(output_folder + report_id + file_name)
+        full_path = pathlib.Path(output_folder + file_name)
         new_file_url = create_document_url(str(full_path))
         # Ensure the output directory exists
         pathlib.Path(output_folder + report_id + file_name).parent.mkdir(
@@ -113,11 +113,14 @@ def writer_fill_tables(document, data: dict):
         table = fill_writer_table_rows(table, table_data, columns_header_map)
         # Fill the footer placeholder if exists
         table = fill_writer_table_footer(table, table_data, footer_rows)
+    return document
 
 
 def generate_writer_table_columns_map(table) -> dict:
     """Generates a mapping of column headers to their respective column names."""
+    # Get all columns in the table
     columns = table.getColumns()
+    # Create a mapping of column headers to column names
     columns_header_map = {}
     for column_index in range(columns.getCount()):
         cell_name = chr(ord("A") + column_index)
@@ -128,8 +131,10 @@ def generate_writer_table_columns_map(table) -> dict:
 
 def fill_writer_table_rows(table, table_data: dict, columns_header_map: dict):
     """Fills the rows of a writer table with the provided data."""
+    # Get existing rows in the table
     rows = table.getRows()
     existing_row_count = rows.getCount()
+    # Get data rows to be filled
     data_rows = table_data.get("data", [])
     # Add new rows if there are more data rows than existing rows
     if len(data_rows) > existing_row_count - 1:
@@ -146,11 +151,15 @@ def fill_writer_table_rows(table, table_data: dict, columns_header_map: dict):
 
 def fill_writer_table_footer(table, table_data: dict, footer_rows):
     """Fills the footer of a writer table if footer data is provided."""
+    # Get footer data from the table data
     footer_data = table_data.get("footer", {})
     if not footer_data:
         return table
+    # Fill the footer rows with the provided data
     last_row_index = table.getRows().getCount()
+    # Calculate the starting index for footer rows
     footer_start = last_row_index - footer_rows
+    # Loop through footer rows and fill in the data
     for row_index in range(footer_start, last_row_index):
         raw = raw.getRows().getByIndex(row_index)
         number_of_cells = raw.getCount()
@@ -254,10 +263,11 @@ def writer_fill_placeholder_fields(document, data: dict):
     return document
 
 
-def open_template(libreoffice: any, template_path: str):
+def open_template(libreoffice: any, file_name: str, template_folder: str):
     """Opens the template document from the given path."""
     # Create properties for opening the document in hidden mode
     args = [create_prop("Hidden", True)]
+    template_path = pathlib.Path(template_folder + file_name)
     # Create the document URL from the template path
     url = create_document_url(template_path)
     # Load and return the document
