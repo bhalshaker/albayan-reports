@@ -8,7 +8,6 @@
   "required": [
     "report_request_id",
     "report_template_id",
-    "report_template_version",
     "report_output_format",
     "report_data",
     "request_date",
@@ -25,11 +24,6 @@
       "type": "string",
       "format": "uuid",
       "description": "Unique identifier for the template being used."
-    },
-    "report_template_version": {
-      "type": "integer",
-      "minimum": 1,
-      "description": "The version number of the report template."
     },
     "report_output_format": {
       "type": "string",
@@ -77,21 +71,16 @@
   "type": "object",
   "required": [
     "report_template_id",
-    "report_template_version",
     "template_file",
     "template_file_type",
-    "template_data_definition",
-    "creation_date"
+    "creation_date",
+    "updated_date"
   ],
   "properties": {
     "report_template_id": {
       "type": "string",
       "format": "uuid",
       "description": "Unique identifier for the report template."
-    },
-    "report_template_version": {
-      "type": "integer",
-      "description": "The version number of the template."
     },
     "template_file": {
       "type": "string",
@@ -102,12 +91,12 @@
       "enum": ["odf"],
       "description": "The file format of the template (currently restricted to ODF)."
     },
-    "template_data_definition": {
-      "type": "object",
-      "description": "A schema or dictionary defining the structure of the data this template expects.",
-      "additionalProperties": true
-    },
     "creation_date":{
+      "type": "string",
+      "format":"date-time",
+      "description":"Time stamp is in ISO 8601 format. e.g., 2025-12-20T13:33:25Z"
+    },
+    "updated_date":{
       "type": "string",
       "format":"date-time",
       "description":"Time stamp is in ISO 8601 format. e.g., 2025-12-20T13:33:25Z"
@@ -117,6 +106,10 @@
 ```
 
 ## Writer Data Schema
+
+```py
+instance={"writer_placeholders":[],"writer_variables":[],"writer_images":{},"writer_tables":[]}
+```
 
 ```js
 {
