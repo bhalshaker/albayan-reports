@@ -4,6 +4,15 @@ const uuidSchema = {
   format: "uuid",
 };
 
+const reportCreationParamsSchema = {
+  type: "object",
+  properties: {
+    reportDefinitionId: { type: "string", format: "uuid" },
+    report_request_id: { type: "string", format: "uuid" }, // or whatever format you need
+  },
+  required: ["reportDefinitionId", "report_request_id"],
+  additionalProperties: false,
+};
 // Schema definition for report definition creation
 const reportDefinitionSchema = {
   type: "object",
@@ -109,6 +118,7 @@ const writerDataSchema = {
 export {
   uuidSchema,
   reportDefinitionSchema,
+  reportCreationParamsSchema,
   reportDataSchema,
   writerDataSchema,
 };
