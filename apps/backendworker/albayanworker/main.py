@@ -6,6 +6,7 @@ from albayanworker.dependancies.libreoffice import get_libreoffice
 from albayanworker.dependancies.dyanomodb import get_dynamodb_table
 from albayanworker.dependancies.dyanomodb import close_dynamodb_resource
 from albayanworker.configs.config import config
+from albayanworker.routes.report_creation_router import report_creation_router
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -35,3 +36,5 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 app = FastAPI(
     lifespan=lifespan, title="Albayan Reports Backend Worker", version="1.0.0"
 )
+
+app.include_router(report_creation_router)
