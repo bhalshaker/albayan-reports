@@ -8,6 +8,7 @@ import {
 } from "../controllers/ReportCreation.controller.js";
 import {
   uuidSchema,
+  reportCreationParamsSchema,
   reportDataSchema,
   writerDataSchema,
 } from "../schemas/reports.schema.js";
@@ -16,6 +17,7 @@ const ReportCreationRoute = express.Router();
 ReportCreationRoute.post(
   "/reports/:reportDefinitionId/issue",
   validateSchemas(reportDataSchema, "body"),
+  validateSchemas(writerDataSchema, "report_data"), // Validate report_data inside body
   createReport
 );
 
@@ -27,12 +29,12 @@ ReportCreationRoute.get(
 
 ReportCreationRoute.get(
   "/reports/:reportDefinitionId/issue/:report_request_id",
-  validateSchemas(uuidSchema, "params"),
+  validateSchemas(reportCreationParamsSchema, "params"),
   getReportByRequestById
 );
 ReportCreationRoute.delete(
   "/reports/:reportDefinitionId/issue/:report_request_id",
-  validateSchemas(uuidSchema, "params"),
+  validateSchemas(reportCreationParamsSchema, "params"),
   deleteReportRequest
 );
 export { ReportCreationRoute };
