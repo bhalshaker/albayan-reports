@@ -1,0 +1,93 @@
+version: "3.8"
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  shared-storage:
+  dynamodb_data:
+
+services:
+  # Python/FastAPI Service
+  backend-worker:
+    build:
+      context: ../../
+      dockerfile: apps/backendworker/Dockerfile
+    container_name: albayan_backend_worker
+    restart: always
+    environment:
+      - ENVIRONMENT=PRODUCTION
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=dummy
+      - AWS_SECRET_ACCESS_KEY=dummy
+      - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
+      - DEFINITION_TABLE_NAME=reports_definition
+      - PROCESSING_TABLE_NAME=reports_processing
+      - LIBREOFFICE_HOST=localhost
+      - LIBREOFFICE_PORT=2002
+      - TEMPLATES_FOLDER=/app/shared_storage/templates/
+      - OUTPUT_FOLDER=/app/shared_storage/output/
+      - TEMP_FOLDER=/app/shared_storage/albayanworker_temp/
+
+    volumes:
+      - shared-storage:/app/shared_storage:Z
+    ports:
+      - "8080:8080"
+    networks:
+      backend:
+        aliases:
+          - backendworker.local
+
+  # Node/Express Service
+  frontend-service:
+    build:
+      context: ../../
+      dockerfile: apps/frontendservice/Dockerfile
+    container_name: albayan_frontend_api
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend-worker
+    environment:
+      - PORT=3000
+      - NODE_ENV=PROD
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=dummy
+      - AWS_SECRET_ACCESS_KEY=dummy
+      - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
+      - DEFINITION_TABLE_NAME=reports_definition
+      - PROCESSING_TABLE_NAME=reports_processing
+      - WORKER_URL=http://backend-worker:8080
+      - UPLOAD_FOLDER=/app/shared_storage/templates
+      - REPORT_OUTPUT_FOLDER=/app/shared_storage/output
+    volumes:
+      - shared-storage:/app/shared_storage:ro,Z
+    networks:
+      - backend
+
+  # DynamoDB Local
+  dynamodb-local:
+    image: docker.io/amazon/dynamodb-local:latest
+    container_name: albayan_dynamodb
+    ports:
+      - "8000:8000"
+    # command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    # volumes:
+    #   - dynamodb_data:/home/dynamodblocal/data:Z
+    networks:
+      - backend
+
+  # DynamoDB Admin GUI
+  dynamodb-admin:
+    image: docker.io/aaronshaf/dynamodb-admin
+    container_name: albayan_dynamodb_admin
+    ports:
+      - "8001:8001"
+    environment:
+      - DYNAMO_ENDPOINT=http://dynamodb-local:8000
+    depends_on:
+      - dynamodb-local
+    networks:
+      - backend
