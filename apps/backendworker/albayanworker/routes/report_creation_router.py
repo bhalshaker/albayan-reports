@@ -7,9 +7,9 @@ report_creation_router = APIRouter()
 
 
 @report_creation_router.get(
-    "{issue_id}",
+    "/reports/issue/{issue_id}",
     response_model=ReportGenerationSchema,
-    title="Retrieve Report Creation Status",
+    summary="Retrieve Report Creation Status",
     description="Create report if it is not already created and retrieve the status.",
 )
 async def retrieve_report(issue_id: UUID) -> ReportGenerationSchema:
