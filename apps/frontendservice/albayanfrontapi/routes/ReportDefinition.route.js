@@ -21,7 +21,6 @@ ReportsDefinitionRouter.post(
   "/reports", // Route path
   upload.single("file"), // Middleware to handle file upload
   validateSchemas(reportDefinitionSchema, "body"), // Validate request body
-  validateSchemas(writerDataSchema, "report_data"), // Validate report_data inside body
   createReportDefinition // Controller to handle creation
 );
 // Define get all report definitions route
@@ -47,7 +46,6 @@ ReportsDefinitionRouter.patch(
   upload.single("file"), // Middleware to handle file upload
   validateSchemas(uuidSchema, "params"), // Validate request params
   validateSchemas(reportDefinitionSchema, "body"), // Validate request body
-  validateSchemas(writerDataSchema, "report_data"), // Validate report_data inside body
   updateReportDefinitionById // Controller to update report definition
 );
 export { ReportsDefinitionRouter };
