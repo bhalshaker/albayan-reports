@@ -5,10 +5,10 @@ from albayanworker.schemas.document_schemas import ProcessingStatus
 
 class DynamodbController:
     async def get_document_creation(
-        report_request_id: uuid, report_creation_table: any
+        report_request_id: uuid.UUID, report_creation_table: any
     ):
         response = await report_creation_table.get_item(
-            Key={"report_id": report_request_id}
+            Key={"report_request_id": str(report_request_id)}
         )
         return (response or {}).get("Item")
 
@@ -19,7 +19,7 @@ class DynamodbController:
     ):
         await report_creation_table.update_item(
             Key={"report_request_id": str(report_request_id)},
-            UpdateExpression="SET request_status = :new_status, update_date = :now",
+            UpdateExpression="SET processing_status = :new_status, update_date = :now",
             ExpressionAttributeValues={
                 ":new_status": new_status.value,
                 ":now": datetime.now().isoformat(),
