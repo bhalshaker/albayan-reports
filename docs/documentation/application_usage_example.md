@@ -558,3 +558,162 @@ curl --location 'http://localhost:3000/reports/ce6ee5f2-1b23-44ce-a8c6-d8f061555
 ```bash
 curl -X DELETE http://localhost:3000/reports/ce6ee5f2-1b23-44ce-a8c6-d8f061555255/issue/ecb3d090-d02f-48aa-8c92-9e4ffe5c81a7
 ```
+
+## 📑 JSON Schema Documentation
+
+### Report Request Schema
+
+#### Description
+
+Defines the structure of a report request object, including metadata, template reference, output format, and processing status.
+
+#### Raw Schema
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Report Request Schema",
+  "type": "object",
+  "required": [
+    "report_request_id",
+    "report_template_id",
+    "report_output_format",
+    "report_data",
+    "request_date",
+    "update_date",
+    "processing_status"
+  ],
+  "properties": {
+    "report_request_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the report request."
+    },
+    "report_template_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the template being used."
+    },
+    "report_output_format": {
+      "type": "string",
+      "enum": ["PDF", "OPENOFFICE", "PDF+OPENOFFICE"],
+      "description": "The desired output format for the generated report."
+    },
+    "report_data": {
+      "type": "object",
+      "description": "A dictionary/object containing the actual data for the report.",
+      "additionalProperties": true
+    },
+    "request_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp."
+    },
+    "update_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp."
+    },
+    "processing_status": {
+      "type": "string",
+      "enum": ["PENDING", "SUCESSFUL", "FAILED"],
+      "description": "The status of report creation."
+    }
+  }
+}
+```
+
+#### Properties
+
+| Property               | Type   | Required | Description                                           |
+| ---------------------- | ------ | -------- | ----------------------------------------------------- |
+| `report_request_id`    | string | ✅       | UUID for the report request                           |
+| `report_template_id`   | string | ✅       | UUID for the template used                            |
+| `report_output_format` | string | ✅       | Output format (`PDF`, `OPENOFFICE`, `PDF+OPENOFFICE`) |
+| `report_data`          | object | ✅       | Key-value data for the report                         |
+| `request_date`         | string | ✅       | ISO 8601 timestamp of request                         |
+| `update_date`          | string | ✅       | ISO 8601 timestamp of last update                     |
+| `processing_status`    | string | ✅       | Status (`PENDING`, `SUCESSFUL`, `FAILED`)             |
+
+#### Example
+
+```json
+{
+  "report_request_id": "123e4567-e89b-12d3-a456-426614174000",
+  "report_template_id": "987e6543-e21b-12d3-a456-426614174999",
+  "report_output_format": "PDF",
+  "report_data": { "customer": "Ebrahim", "amount": "2500" },
+  "request_date": "2025-12-20T13:33:25Z",
+  "update_date": "2025-12-21T09:15:00Z",
+  "processing_status": "PENDING"
+}
+```
+
+---
+
+### Report Template Schema
+
+#### Description
+
+Defines the structure of a report template object, including file details and timestamps.
+
+#### Properties
+
+| Property             | Type   | Required | Description                                   |
+| -------------------- | ------ | -------- | --------------------------------------------- |
+| `report_template_id` | string | ✅       | UUID for the report template                  |
+| `template_file`      | string | ✅       | Path, URL, or base64 content of template file |
+| `template_file_type` | string | ✅       | File format (currently only `odf`)            |
+| `creation_date`      | string | ✅       | ISO 8601 timestamp of creation                |
+| `updated_date`       | string | ✅       | ISO 8601 timestamp of last update             |
+
+#### Example
+
+```json
+{
+  "report_template_id": "987e6543-e21b-12d3-a456-426614174999",
+  "template_file": "https://example.com/template.odf",
+  "template_file_type": "odf",
+  "creation_date": "2025-12-20T13:33:25Z",
+  "updated_date": "2025-12-21T09:15:00Z"
+}
+```
+
+---
+
+### Writer Data Schema
+
+#### Description
+
+Defines the structure of writer data, including placeholders, variables, images, and tables.
+
+#### Properties
+
+| Property              | Type   | Required | Description                                                        |
+| --------------------- | ------ | -------- | ------------------------------------------------------------------ |
+| `writer_placeholders` | array  | ✅       | List of objects mapping placeholder names to strings               |
+| `writer_variables`    | array  | ✅       | List of objects mapping variable names to strings                  |
+| `writer_images`       | object | ✅       | Key-value pairs of image names → base64 strings                    |
+| `writer_tables`       | array  | ✅       | List of tables with `table_name`, `content`, and optional `footer` |
+
+#### Example
+
+```json
+{
+  "writer_placeholders": [{ "customer_name": "Ebrahim" }],
+  "writer_variables": [{ "invoice_number": "INV-2025-001" }],
+  "writer_images": {
+    "logo": "iVBORw0KGgoAAAANSUhEUgAA..."
+  },
+  "writer_tables": [
+    {
+      "table_name": "items",
+      "content": [
+        { "item": "Laptop", "price": "1200" },
+        { "item": "Mouse", "price": "50" }
+      ],
+      "footer": { "total": "1250" }
+    }
+  ]
+}
+```
