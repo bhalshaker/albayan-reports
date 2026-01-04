@@ -20,8 +20,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # Connect to required databases/services
     try:
         await get_libreoffice()
-        await get_dynamodb_table(config.definition_table)
-        await get_dynamodb_table(config.processing_table)
+        # await get_dynamodb_table(config.definition_table)
+        # await get_dynamodb_table(config.processing_table)
         config.create_directories_if_not_exists()
         logger.info("Albayan Reports Worker successfully started.")
         yield
