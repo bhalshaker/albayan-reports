@@ -1,6 +1,7 @@
 import logging
 from uuid import UUID
 from jsonschema import validate, ValidationError
+import asyncio
 from albayanworker.dependancies.dyanomodb import get_dynamodb_table
 from albayanworker.dependancies.libreoffice import get_libreoffice
 from albayanworker.schemas.document_schemas import (
@@ -36,75 +37,107 @@ async def process_report_creation(issue_id: UUID) -> ReportGenerationSchema:
     """
     Process the report creation request based on the provided issue ID.
     """
+    logger.info("Starting process_report_creation for issue_id=%s", issue_id)
+    # Retrieve document creation request
     try:
-        # Get dyanamodb table for document creation requests
         document_creation_table = await get_dynamodb_table(config.processing_table)
-        # Fetch the document creation request from DynamoDB
         document_creation_request = await DynamodbController.get_document_creation(
             issue_id, document_creation_table
         )
     except Exception as excep:
-        # Log and return any exceptions encountered during the process
-        logging.error(excep)
-        # Return failure response
-        return ReportGenerationSchema(False, excep)
+        return ReportGenerationSchema(False, f"Failed to fetch request: {excep}")
+
     if not document_creation_request:
-        # Return that the issue id was not found
         return ReportGenerationSchema(False, "Report creation record does not exist")
+
+    # Retrieve the template information
     try:
-        # Fetch the report template information
         template_id = UUID(document_creation_request.get("report_template_id"))
-        # Get dyanamodb table for document definitions
         document_definition_table = await get_dynamodb_table(config.definition_table)
-        # Retrieve the document report template from DynamoDB
         document_report_template = await DynamodbController.get_template_info(
             template_id, document_definition_table
         )
     except Exception as excep:
-        # Log and return any exceptions encountered during the process
-        logging.error(excep)
-        return ReportGenerationSchema(False, excep)
+        return ReportGenerationSchema(False, f"Failed to fetch template: {excep}")
+
     if not document_report_template:
-        # Return that the template in the request is not found
+        logger.error(
+            "Referencing template definition does not exist for issue_id=%s, template_id=%s",
+            issue_id,
+            document_creation_request.get("report_template_id"),
+        )
         return ReportGenerationSchema(
             False, "Refrencing template definition does not exist"
         )
+
+    # Validate input and execute creation flow
     try:
-        # Extract necessary information from the request and template
         report_output_format = str(
             document_creation_request.get("report_output_format")
         )
         template_format = str(document_report_template.get("template_file_type"))
         template_file_name = document_report_template.get("template_file")
         report_data = document_creation_request.get("report_data")
-        # Validate the report data against the template schema
+
+        logger.info("Validating report data for issue_id=%s against schema", issue_id)
         validation_results = schema_validation(report_data, writter_default_schema)
         if not validation_results.is_valid:
-            # Register that the creation was not valid
-            DynamodbController.update_document_creation(
-                issue_id, ProcessingStatus.FAILED, document_creation_table
+            logger.warning(
+                "Validation failed for issue_id=%s: %s",
+                issue_id,
+                validation_results.message,
             )
-            # Return failure
+            # Register that the creation was not valid
+            try:
+                await DynamodbController.update_document_creation(
+                    issue_id, ProcessingStatus.FAILED, document_creation_table
+                )
+            except Exception:
+                logger.exception(
+                    "Failed to update document_creation status for issue_id=%s",
+                    issue_id,
+                )
             return ReportGenerationSchema(
                 False, "Report data does not match report template definition"
             )
-        # Process report creation based on the template format
+
+        # Process based on template format
         if template_format == "odf":
-            # Call the function to create a Writer report
-            create_writer_report(template_file_name, report_output_format, report_data)
-            # Update the document creation status to completed
-            DynamodbController.update_document_creation(
-                issue_id, ProcessingStatus.SUCCESSFUL, document_creation_table
+            # Normalize and validate output format before creating report
+            requested_format = (
+                str(report_output_format).strip().upper()
+                if report_output_format is not None
+                else ""
             )
-            # Return success response
+            if requested_format in ("", "NONE", "NULL", "UNDEFINED"):
+                logger.warning(
+                    "No valid report_output_format provided for issue_id=%s — defaulting to 'PDF'",
+                    issue_id,
+                )
+                requested_format = "PDF"
+            await create_writer_report(
+                issue_id, template_file_name, requested_format, report_data
+            )
+            try:
+                await DynamodbController.update_document_creation(
+                    issue_id, ProcessingStatus.SUCCESSFUL, document_creation_table
+                )
+            except Exception:
+                logger.exception(
+                    "Failed to update document_creation status to SUCCESSFUL for issue_id=%s",
+                    issue_id,
+                )
             return ReportGenerationSchema(True)
+
+        return ReportGenerationSchema(
+            False, f"Unsupported template format: {template_format}"
+        )
+
     except Exception as excep:
-        # Log and return any exceptions encountered during the process
-        logging.error(excep)
-        return ReportGenerationSchema(False, excep)
+        return ReportGenerationSchema(False, str(excep))
 
 
-def create_writer_report(
+async def create_writer_report(
     report_issue_id: UUID,
     template_file_name: str,
     report_output_format: str,
@@ -113,46 +146,50 @@ def create_writer_report(
     """
     Create a Writer report using LibreOffice based on the provided template and data."""
     try:
-        # Get LibreOffice instance
-        libreoffice = get_libreoffice()
-        # Open the template document
-        document = libreoffice_utilites.open_template(
-            libreoffice, template_file_name, config.templates_folder
+        # Get LibreOffice instance (async)
+        try:
+            libreoffice = await get_libreoffice()
+        except Exception:
+            logger.exception(
+                "Failed to obtain LibreOffice instance for issue_id=%s", report_issue_id
+            )
+            raise
+
+        # Normalize format (accept uppercase form) to avoid branch misses
+        normalized_format = (
+            str(report_output_format).strip().upper()
+            if report_output_format is not None
+            else ""
         )
-        # Fill in the document placeholder with the provided data
-        if len(report_data.get("writer_placeholders")) > 0:
-            document = libreoffice_utilites.writer_fill_placeholder_fields(
-                document, report_data
+        if normalized_format in ("", "NONE", "NULL", "UNDEFINED"):
+            normalized_format = "PDF"
+        try:
+            logger.info(
+                "Processing writer document in worker thread for issue_id=%s (format=%s)",
+                report_issue_id,
+                normalized_format,
             )
-        # Fill in the document variables with the provided data
-        if len(report_data.get("writer_variables")) > 0:
-            document = libreoffice_utilites.writer_fill_variable_fields(
-                document, report_data
-            )
-        # Replace images in the document with the provided data
-        if len(report_data.get("writer_images").keys()) > 0:
-            document = libreoffice_utilites.replace_writer_images(
-                document, report_data.get("writer_images"), config.temp_folder
-            )
-        # Fill in the document tables with the provided data
-        if len(report_data.get("writer_tables")) > 0:
-            document = libreoffice_utilites.writer_fill_tables(document, report_data)
-        # Save the document in the requested output format(s)
-        if report_output_format == "PDF" or report_output_format == "PDF+OPENOFFICE":
-            libreoffice_utilites.save_document(
-                document,
-                config.output_folder,
+            await asyncio.to_thread(
+                libreoffice_utilites.process_writer_document_and_save,
+                libreoffice,
+                template_file_name,
                 str(report_issue_id),
-                "writer_pdf_Export",
+                normalized_format,
+                report_data,
+                config.templates_folder,
+                config.temp_folder,
+                config.output_folder,
             )
-        if (
-            report_output_format == "OPENOFFICE"
-            or report_output_format == "PDF+OPENOFFICE"
-        ):
-            libreoffice_utilites.save_document(
-                document, config.output_folder, str(report_issue_id), "writer8"
+        except Exception:
+            logger.exception(
+                "Failed to process and save document for issue_id=%s", report_issue_id
             )
+            raise
     except Exception as excep:
         # Log and raise any exceptions encountered during the process
-        logging.error(excep)
+        logger.exception(
+            "Error while creating writer report for issue_id=%s: %s",
+            report_issue_id,
+            excep,
+        )
         raise

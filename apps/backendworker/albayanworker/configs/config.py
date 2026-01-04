@@ -43,9 +43,9 @@ class Config:
             processing_table=os.getenv("PROCESSING_TABLE_NAME", "reports_processing"),
             libreoffice_host=os.getenv("LIBREOFFICE_HOST", "localhost").lower(),
             libreoffice_port=int(os.getenv("LIBREOFFICE_PORT", "2002")),
-            templates_folder=os.getenv("TEMPLATES_FOLDER", "/tmp/input"),
-            output_folder=os.getenv("OUTPUT_FOLDER", "/tmp/output"),
-            temp_folder=os.getenv("TEMP_FOLDER", "/tmp/albayanworker_temp"),
+            templates_folder=os.getenv("TEMPLATES_FOLDER", "/tmp/input/"),
+            output_folder=os.getenv("OUTPUT_FOLDER", "/tmp/output/"),
+            temp_folder=os.getenv("TEMP_FOLDER", "/tmp/albayanworker_temp/"),
         )
 
 

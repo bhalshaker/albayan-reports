@@ -7,8 +7,10 @@ import { ReportsDefinitionRouter } from "./albayanfrontapi/routes/ReportDefiniti
 
 // Initilize Express application
 const app = express();
-// Enable JSON parsing for incoming requests
-app.use(express.json());
+// Increase the limit for JSON payloads
+app.use(express.json({ limit: "10mb" }));
+// Increase the limit for URL-encoded payloads
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 // Serve files from that folder
 app.use("/output", express.static(path.resolve(config.REPORT_OUTPUT_FOLDER)));
 // Morgan logging middleware
@@ -16,7 +18,7 @@ app.use(morgan("combined"));
 // Application Routes
 app.use(ReportCreationRoute);
 app.use(ReportsDefinitionRouter);
-// Only start the server when not running tests. Jest sets NODE_ENV=test.
+
 if (process.env.NODE_ENV != "test") {
   app.listen(config.PORT, () => {
     console.log(

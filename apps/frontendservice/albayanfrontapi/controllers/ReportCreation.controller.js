@@ -13,7 +13,7 @@ const createReport = async (request, response) => {
     // Create a new report request in the database
     const createReportRecord = await createReportService(
       request.params.reportDefinitionId,
-      request.body.output_format,
+      request.body.report_output_format,
       request.body.report_data
     );
     // Fetch the created report from the worker service
@@ -26,8 +26,8 @@ const createReport = async (request, response) => {
       message: "successful",
       details: null,
       data: {
-        report_request_id: request.params.report_request_id,
-        report_data: createReportRequest,
+        report_request_id: createReportRecord.report_request_id,
+        worker_creation_report: createReportRequest,
       },
     });
   } catch (error) {
