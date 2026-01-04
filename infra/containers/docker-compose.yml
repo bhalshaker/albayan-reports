@@ -7,13 +7,24 @@ networks:
 volumes:
   shared-storage:
   dynamodb_data:
-
 services:
+  # FIXER SERVICE: Runs as root to set volume ownership before apps start
+  volume-fixer:
+    image: alpine
+    container_name: albayan_volume_fixer
+    user: root
+    volumes:
+      - shared-storage:/app/shared_storage:Z
+    # We force create the subfolders and set 777 permissions as a fallback
+    command: >
+      sh -c "mkdir -p /app/shared_storage/templates /app/shared_storage/output /app/shared_storage/albayanworker_temp && 
+             chown -R 1000:1000 /app/shared_storage && 
+             chmod -R 777 /app/shared_storage"
   # Python/FastAPI Service
   backend-worker:
     build:
       context: ../../
-      dockerfile: apps/backendworker/Dockerfile
+      dockerfile: infra/containers/backend.Dockerfile
     container_name: albayan_backend_worker
     restart: always
     environment:
@@ -29,9 +40,8 @@ services:
       - TEMPLATES_FOLDER=/app/shared_storage/templates/
       - OUTPUT_FOLDER=/app/shared_storage/output/
       - TEMP_FOLDER=/app/shared_storage/albayanworker_temp/
-
     volumes:
-      - shared-storage:/app/shared_storage:Z
+      - shared-storage:/app/shared_storage:rw,Z
     ports:
       - "8080:8080"
     networks:
@@ -43,7 +53,7 @@ services:
   frontend-service:
     build:
       context: ../../
-      dockerfile: apps/frontendservice/Dockerfile
+      dockerfile: infra/containers/frontend.Dockerfile
     container_name: albayan_frontend_api
     restart: always
     ports:
@@ -63,9 +73,10 @@ services:
       - UPLOAD_FOLDER=/app/shared_storage/templates
       - REPORT_OUTPUT_FOLDER=/app/shared_storage/output
     volumes:
-      - shared-storage:/app/shared_storage:ro,Z
+      - shared-storage:/app/shared_storage:rw,Z
     networks:
       - backend
+    user: "node"
 
   # DynamoDB Local
   dynamodb-local:
@@ -86,6 +97,9 @@ services:
     ports:
       - "8001:8001"
     environment:
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=dummy
+      - AWS_SECRET_ACCESS_KEY=dummy
       - DYNAMO_ENDPOINT=http://dynamodb-local:8000
     depends_on:
       - dynamodb-local
