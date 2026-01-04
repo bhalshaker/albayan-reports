@@ -6,7 +6,7 @@ Albayan Reports is an open-source reporting engine designed for seamless integra
 
 It enables organizations to generate static reports from custom Writer OpenOffice/LibreOffice templates. Reports can be delivered in native OpenOffice/LibreOffice formats or print-ready PDFs, with full support for embedding text, dynamic tables, and images. Albayan standardizes reporting across teams while offering complete flexibility in template design.
 
-Built on a scalable, multi-service architecture utilizing **Express**, **FastAPI**, and **DynamoDB**, the system is engineered to support multi-user environments, automated CI/CD pipelines, and containerized deployments.
+Built on a scalable, multi-service architecture utilizing **Express**, **FastAPI**, and **DynamoDB**, the system is engineered to run cloud native in a containerized deployments.
 
 Future development will focus on evolving Albayan into a vendor-neutral, extensible reporting solution that enterprises can confidently adopt across diverse cloud environments.
 
@@ -23,8 +23,7 @@ Future development will focus on evolving Albayan into a vendor-neutral, extensi
 | **Scalability**       | Multi-user support and issuance tracking planned                                                 |
 | **Security**          | API key authentication for controlled enterprise access                                          |
 | **Deployment**        | Containerized (Podman/Kubernetes), AWS DynamoDB required, cloud-agnostic                         |
-| **Automation**        | CI/CD pipelines with Jenkins & GitHub Actions; Terraform & Ansible scripts                       |
-| **Testing**           | Automated testing with Jest, SuperTest, and Pytest                                               |
+| **Automation**        | Terraform                                                                                        |
 | **Open Source**       | Documentation, examples, and sample templates included in the GitHub repository                  |
 | **Future Vision**     | Vendor-neutral, extensible reporting system for diverse environments                             |
 
@@ -49,7 +48,6 @@ Future development will focus on evolving Albayan into a vendor-neutral, extensi
 ├── infra/ # Deployment & infrastructure configuration
 │   ├── containers/ # Shared Docker setup
 │   ├── terraform/ # IaC for cloud setup (e.g., DynamoDB, ECS, load balancers)
-│   └── ci-cd/ # Pipeline scripts
 │
 ├── docs/ # Documentation
 │   ├── architecture.md # Express ↔ FastAPI flow
@@ -107,6 +105,9 @@ Future development will focus on evolving Albayan into a vendor-neutral, extensi
 | **@aws-sdk/lib-dynamodb**    | DynamoDB helper utilities                                    |
 | **cors**                     | Middleware for enabling CORS                                 |
 | **nodemon**                  | Development utility for auto-restarting Node.js applications |
+| **axios**                    | Promise-based HTTP client for making API requests            |
+| **morgan**                   | HTTP request logger middleware for Node.js                   |
+| **multer**                   | Middleware for handling `multipart/form-data` (file uploads) |
 
 ### 🐍 albayanworker (FastAPI)
 

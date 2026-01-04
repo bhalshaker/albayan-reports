@@ -1,51 +1,61 @@
-```sh
-podman run -d --name dynamodb-local -p 8000:8000 docker.io/amazon/dynamodb-local:latest
-```
+# Project Setup Guide
+
+## Prerequisites
+
+Before starting, ensure the following tools are installed on your system:
+
+- **Podman**: A container engine used to run and manage containers.  
+  Installation guide: [Podman Official Documentation](https://podman.io/getting-started/installation)
+
+- **Podman Compose**: A tool to run `docker-compose` style workflows with Podman.  
+  Typically installed via:
+
+  ```sh
+  pip install podman-compose
+  ```
+
+- **Terraform**: An infrastructure-as-code tool used to provision resources.  
+  Installation guide: [Terraform Official Downloads](https://developer.hashicorp.com/terraform/downloads)
+
+---
+
+## Setup Instructions
+
+### 1. Clone the repository
 
 ```sh
-AWS_ACCESS_KEY_ID=dummy AWS_SECRET_ACCESS_KEY=dummy \
-aws dynamodb list-tables \
---endpoint-url http://localhost:8000 \
---region us-east-1
+git clone https://github.com/bhalshaker/albayan-reports.git
 ```
+
+### 2. Navigate to the project directory
 
 ```sh
-podman run -d --name dynamodb-admin \
-  -p 8001:8001 \
-  -e DYNAMO_ENDPOINT=http://localhost:8000 \
-  -e AWS_REGION=us-east-1 \
-  -e AWS_ACCESS_KEY_ID=dummy \
-  -e AWS_SECRET_ACCESS_KEY=dummy \
-  --net=host \
-  aaronshaf/dynamodb-admin
+cd albayan-reports
 ```
 
-```sh
-AWS_ACCESS_KEY_ID=dummy AWS_SECRET_ACCESS_KEY=dummy \
-aws dynamodb list-tables \
---endpoint-url http://localhost:8000 \
---region us-east-1
-```
-
-```sh
-terraform init
-```
-
-```sh
-TF_VAR_is_local=true TF_VAR_aws_region=us-east-1 TF_VAR_access_key=dummy TF_VAR_secret_key=dummy TF_VAR_dynamodb=http://localhost:8000 \
-terraform apply
-```
-
-```sh
-
-```
-
-```sh
-cd /home/devnation/vscode/albayan-reports/apps/backendworker
-uvicorn albayanworker.main:app --port 8080
-```
+### 3. Build the environment using Podman Compose
 
 ```sh
 cd infra/containers
 podman-compose up -d --build
+```
+
+### 4. Initialize Terraform and create the tables
+
+Navigate to the Terraform directory:
+
+```sh
+cd ../terraform
+terraform init
+```
+
+Apply the Terraform configuration with the required environment variables:
+
+```sh
+TF_VAR_is_local=true \
+TF_VAR_aws_region=us-east-1 \
+TF_VAR_access_key=dummy \
+TF_VAR_secret_key=dummy \
+TF_VAR_dynamodb=http://localhost:8000 \
+terraform apply
 ```
