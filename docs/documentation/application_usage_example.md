@@ -224,16 +224,13 @@ The generated files can be accessed using the `report_request_id`:
 - **PDF Output:**  
   [http://localhost:3000/output/f1234567-89ab-4cde-0123-456789abcdef.pdf](http://localhost:3000/output/f1234567-89ab-4cde-0123-456789abcdef.pdf)
 
-Great — let’s refine **Example 3** into a polished Markdown section that shows how to generate an **event badge** with text placeholders and a dynamically inserted **QR code image**. I’ll keep the same structured style as before so your documentation feels consistent.
-
-````markdown
-# Example 3: Generating an Event Badge with QR Code
+## Example 3: Generating an Event Badge with QR Code
 
 This example demonstrates how to generate an event badge by replacing text placeholders and inserting a QR code image.
 
 ---
 
-## Step 1: Upload the Event Badge Template
+### Step 1: Upload the Event Badge Template
 
 Use the following `POST` request to upload the badge template file:
 
@@ -243,7 +240,6 @@ curl -X POST http://localhost:3000/reports \
   -F "file=@./templates/variable_with_image_event_badge_template.odt" \
   -F "template_file_type=odf"
 ```
-````
 
 #### Response
 
@@ -264,9 +260,9 @@ curl -X POST http://localhost:3000/reports \
 
 ---
 
-### Step 2: Issue a Report with Placeholders and QR Code
+#### Step 2: Issue a Report with Placeholders and QR Code
 
-Use the `report_template_id` from the previous response to issue a new badge.  
+Use the `report_template_id` from the previous response to issue a new badge.
 Here, placeholders are replaced with attendee details, and a QR code image is inserted.
 
 ```bash
@@ -289,7 +285,7 @@ curl --location 'http://localhost:3000/reports/a1b2c3d4-5678-90ab-cdef-123456789
 }'
 ```
 
-#### Response
+##### Response
 
 ```json
 {
@@ -308,21 +304,16 @@ curl --location 'http://localhost:3000/reports/a1b2c3d4-5678-90ab-cdef-123456789
 
 ---
 
-### Step 3: Access the Generated Files
+#### Step 3: Access the Generated Files
 
 The generated badge files can be accessed using the `report_request_id`:
 
-- **PDF Output:**  
+- **PDF Output:**
   [http://localhost:3000/output/b2345678-90ab-cdef-1234-567890abcdef.pdf](http://localhost:3000/output/b2345678-90ab-cdef-1234-567890abcdef.pdf)
 
-- **ODT Output:**  
+- **ODT Output:**
   [http://localhost:3000/output/b2345678-90ab-cdef-1234-567890abcdef.odt](http://localhost:3000/output/b2345678-90ab-cdef-1234-567890abcdef.odt)
 
-Perfect — let’s transform your raw API examples into a **clean, professional Markdown documentation section**. I’ll add headings, structure, and explanatory notes so it’s easy to read and reference.
-
-Here’s the improved version:
-
-````markdown
 # Express.js API Examples
 
 This guide demonstrates how to interact with the **Report Definition APIs** and **Report Issue APIs** in an Express.js application.
@@ -341,6 +332,7 @@ curl -X POST http://localhost:3000/reports \
   -F "file=@./templates/invoice_template_with_table.odt" \
   -F "template_file_type=odf"
 ```
+
 ````
 
 #### Response
@@ -717,3 +709,4 @@ Defines the structure of writer data, including placeholders, variables, images,
   ]
 }
 ```
+````
